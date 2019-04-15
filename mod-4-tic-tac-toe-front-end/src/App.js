@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import './App.css';
+import GameRoomList from './components/GameRoomList';
 
 import Game from './components/Game'
 
@@ -8,7 +9,7 @@ class App extends Component {
     return (
       <div className="App">
         <header className="App-header">
-          <Game  />
+          <GameRoomList  />
         </header>
       </div>
     );
