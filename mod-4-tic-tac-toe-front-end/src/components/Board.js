@@ -7,7 +7,7 @@ export default class Board extends React.Component {
   state = {
     squares:Array(9).fill(null),
     xIsNext:true,
-    content: '',
+    content: 'X',
     game_id: this.props.game.id
   }
 
@@ -22,19 +22,18 @@ export default class Board extends React.Component {
         return;
       }
 
-      squares[i] =  this.state.xIsNext ? 'X' : 'O'
+      squares[i] = this.state.xIsNext ? 'X' : 'O'
       this.setState({
         squares : squares,
-        xIsNext: !this.state.xIsNext
+        xIsNext: !this.state.xIsNext,
+        content: squares[i]
       }, () => {
-          this.setState({content: this.state.xIsNext ? 'X' : 'O'});
+          fetch(`${API_ROOT}/game_moves`, {
+            method: 'POST',
+            headers: HEADERS,
+            body: JSON.stringify({game_id: this.props.game.id ,square_index:i, content: squares[i] })
+          });
       });
-
-     fetch(`${API_ROOT}/game_moves`, {
-       method: 'POST',
-       headers: HEADERS,
-       body: JSON.stringify({game_id: this.props.game.id ,square_index:i, content: this.state.content})
-     });
 
 
   }
@@ -60,7 +59,7 @@ export default class Board extends React.Component {
     if (winner) {
       status = 'Winner: ' + winner;
     } else {
-      status = 'Next player: ' + (this.state.content ? 'X' : 'O');
+      status = 'Next player: ' + (this.state.content === 'X' ? 'O' : 'X');
     }
 
     return (
