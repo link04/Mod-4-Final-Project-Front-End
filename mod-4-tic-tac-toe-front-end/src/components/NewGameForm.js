@@ -4,7 +4,7 @@ import { API_ROOT, HEADERS } from '../constants';
 export default class NewGameForm extends React.Component {
 
   state = {
-    user_id1:4,
+    user_id1:1,
     user_id2:2,
   }
 
