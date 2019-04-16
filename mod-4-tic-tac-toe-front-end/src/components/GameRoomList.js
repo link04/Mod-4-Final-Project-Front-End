@@ -1,7 +1,9 @@
 import React from 'react';
 import {ActionCable} from 'react-actioncable-provider';
 import {API_ROOT} from '../constants';
-import Cable from './cable';
+import Cable from './Cable';
+import NewGameForm from './NewGameForm'
+import Game from './Game'
 
 export default class GameRoomList extends React.Component {
 
@@ -20,16 +22,17 @@ export default class GameRoomList extends React.Component {
     this.setState({activeGame: id})
   }
 
-  handleRecievedGame = response => {
+  handleReceivedGame = response => {
     const {game} = response;
     this.setState({games: [...this.state.games, game]});
   }
 
-  handleRecievedGameMove = response => {
+  handleReceivedGameMove = response => {
     const {game_move} = response;
     const games = [...this.state.games]
     const game = games.find(game => game.id === game_move.game_id);
     game.game_moves = [...game.game_moves, game_move];
+
     this.setState({games: games});
   }
 
@@ -37,13 +40,18 @@ export default class GameRoomList extends React.Component {
     const {games, activeGame} = this.state;
     return (
       <div>
-        <ActionCable channel={{channel: 'GamesChannel'}} onReceived={this.handleRecievedGame}/>
+        <ActionCable channel={{channel: 'GamesChannel'}} onReceived={this.handleReceivedGame}/>
         {games.length ? (
-          <Cable games={games} handleReceivedMessage={this.handleReceivedMessage}/>)
+          <Cable games={games} handleReceivedGameMove={this.handleReceivedGameMove}/>)
             : null
         }
-        <h1>Hey</h1>
+        <h1>Game Rooms</h1>
+        <NewGameForm />
         <ul>{mapGames(games, this.handleClick)}</ul>
+
+        { activeGame ? (
+          <Game game={findActiveGame(games,activeGame)} />
+        ) : null }
       </div>
     )
   }
@@ -59,7 +67,7 @@ const mapGames = (games, handleClick) => {
   return games.map(game => {
     return (
       <li key={game.id} onClick={() => handleClick(game.id)}>
-        {game.title}
+        Game {game.id}
       </li>
     );
   });
